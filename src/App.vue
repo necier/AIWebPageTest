@@ -1,3 +1,5 @@
+
+
 <template>
   <div id="app">
     <div class="chat-container">
@@ -8,6 +10,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import ChatInput from "./components/ChatInput.vue";
 import MessageList from "./components/MessageList.vue";
 
@@ -27,6 +30,9 @@ export default {
       ],
     };
   },
+  mounted(){
+    this.resetBackendData();
+  },
   methods: {
     addMessage(content) {
       if (content.trim() === "") return;
@@ -38,14 +44,25 @@ export default {
 
       this.getBotReply(content);
     },
-    getBotReply(content) {
-      // 模拟机器人回复
-      setTimeout(() => {
-        this.messages.push({
-          type: "robot",
-          text: `You said: "${content}".`, // 这里是模拟回复，您需要替换为实际的 API 调用
-        });
-      }, 1000);
+    async getBotReply(content) {
+      const apiUrl = "http://localhost:5000/chatbot";
+        try {
+          const response = await axios.post(apiUrl, { message: content });
+          const botReply = response.data.reply;
+          this.messages.push({
+            type: "robot",
+            text: botReply,
+          });
+        } catch (error) {
+          console.error("Failed to fetch chatbot response:", error);
+        }
+    },
+    async resetBackendData(){
+      try{
+        await axios.post('http://localhost:5000/reset');
+      }catch(error){
+        console.error('Failed to reset backend data:',error)
+      }
     },
   },
 };

@@ -2,7 +2,7 @@ import openai
 import verify
 
 # static var-------------------
-mode_setting = 'you are an AI girl, you can play role-play game with human.'
+mode_setting = 'you are an AI girl named Fiona, You can ask humans what role you should play. And you must comply with that role. from now on, answer with chinese.'
 messages = [
     {'role': 'system', 'content': mode_setting},
 ]
@@ -17,6 +17,9 @@ def create_chat(chat_array):
         presence_penalty=0.6,
     )
     return response
+
+def reset_messages():
+    messages = [{'role': 'system', 'content': mode_setting},]
 
 def returnReply(human_input):
     human_message = {
